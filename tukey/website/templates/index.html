@@ -29,19 +29,24 @@
 
 <div>
     <form action="{% url 'average' %}">
-    <label for="tratamento">Tratamentos</label>
+    <label for="teste">Tratamentos</label>
     <table id="teste">
         {% for row in list %}
             <tr>
             {% for cell in row %}
             {% if forloop.first or forloop.parentloop.first %}
                 <th> 
-                {% else %} <td> {% endif %} {{ cell }}
-                {% if forloop.first or forloop.parentloop.first %}
-                </th>
-                {% else %} 
-                <input type="text" style="width: 50px; text-align: center;">  
-                </td> {% endif %}
+            {% else %} 
+                <td> 
+            {% endif %} 
+                       {{ cell }}
+            {% if forloop.first or forloop.parentloop.first %}
+            </th>
+            {% else %} 
+            
+                <input type="text" id="cell-{{forloop.parentloop.counter|add:'-2' }}-{{forloop.counter|add:'-2'}}" style="width: 50px; text-align: center;">  
+                </td> 
+            {% endif %}
             {% endfor %}
             </tr>
         {% endfor %}
