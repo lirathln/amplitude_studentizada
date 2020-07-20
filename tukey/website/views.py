@@ -1,4 +1,5 @@
 from django.shortcuts import render
+<<<<<<< HEAD
 import numpy as np
 import pandas as pd
 from django.http import request
@@ -25,26 +26,47 @@ def hello_world(request):
 
 def create_table(request):
     global k, n, alfa, table
+=======
+
+
+def hello_world(request):
+    return render(request, 'index.html')
+
+
+def create_table(request):
+>>>>>>> a3687ec45ebaca81c6b91d30e92b2b3508e2d21e
     k = int(request.GET['k'])
     n = int(request.GET['n'])
     alfa = float(request.GET['alfa'])
 
+<<<<<<< HEAD
     alfa_list = ['0.01', '0.05', '0.1']
     items = [k, k * n - k]
 
     generate_matrix()
     format_table = table.style.format({cell: format_html(cell) for cell in table.columns}).render()
+=======
+    items = [k, k * n - k]
+
+    list = generate_matrix(n, k)
+>>>>>>> a3687ec45ebaca81c6b91d30e92b2b3508e2d21e
 
     data = {'k': k,
             'n': n,
             'alfa': alfa,
+<<<<<<< HEAD
             'alfa_list': alfa_list,
             'items': items,
             'table': format_table} # tentar criar método para adicionar input e adicionar id (https://stackoverflow.com/questions/41470817/edit-pandas-dataframe-in-flask-html-page)
+=======
+            'items': items,
+            'list': list}
+>>>>>>> a3687ec45ebaca81c6b91d30e92b2b3508e2d21e
 
     return render(request, 'index.html', data)
 
 
+<<<<<<< HEAD
 def calcule_tukey(request):
     global k, n, alfa, table, average, variance, mq_in 
 
@@ -120,3 +142,32 @@ def get_mq():
 
 def format_html(cell):
     return '<input name="{}" value="{{}}" type="number" min="0" step=".25" />'.format(cell)
+=======
+def generate_matrix(n, k):
+    row = []
+    list = []
+    first = True
+
+    for j in range(n + 1):
+        if first:
+            row.append('Repetições')
+        else:
+            row.append('{}'.format(j))
+
+        for i in range(k):
+            if first:
+                row.append('T{}'.format(i + 1))
+            else:
+                row.append('')
+
+        list.append(row)
+        row = []
+        first = False
+    return list
+
+def average(request):
+
+    #
+
+    return render(request, 'index.html')
+>>>>>>> a3687ec45ebaca81c6b91d30e92b2b3508e2d21e
