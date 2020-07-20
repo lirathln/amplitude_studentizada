@@ -1,8 +1,9 @@
 from django.shortcuts import render
 import numpy as np
 import pandas as pd
+from django.http import request
 
-# global variable
+# Global Variable
 k = None
 n = None
 alfa = None
@@ -13,7 +14,13 @@ mq_in = None
 
 # Primary Function
 def hello_world(request):
-    return render(request, 'index.html')
+    alfa_list = ['0.01', '0.05', '0.1']
+
+    data = {
+        'alfa_list': alfa_list
+    }
+
+    return render(request, 'index.html', data)
 
 
 def create_table(request):
@@ -22,12 +29,18 @@ def create_table(request):
     n = int(request.GET['n'])
     alfa = float(request.GET['alfa'])
 
+    alfa_list = ['0.01', '0.05', '0.1']
+    items = [k, k * n - k]
+
     generate_matrix()
+    format_table = table.style.format({cell: format_html(cell) for cell in table.columns}).render()
 
     data = {'k': k,
             'n': n,
             'alfa': alfa,
-            'table': table}
+            'alfa_list': alfa_list,
+            'items': items,
+            'table': format_table} # tentar criar método para adicionar input e adicionar id (https://stackoverflow.com/questions/41470817/edit-pandas-dataframe-in-flask-html-page)
 
     return render(request, 'index.html', data)
 
@@ -35,6 +48,7 @@ def create_table(request):
 def calcule_tukey(request):
     global k, n, alfa, table, average, variance, mq_in 
 
+    get_table_values()
     get_average()
     get_variance()
     get_mq()
@@ -57,20 +71,21 @@ def generate_matrix():
 
     for i in range(1, max(k, n) + 1):
         if n >= i:
-            table['T{}'.format(i)] = np.nan
+            table['T{}'.format(i)] = 0
         if k >= i:
-            table.loc[i] = np.nan
+            table.loc[i] = 0
 
     return table
 
 
-def get_table_values():
+def get_table_values(list):
     global table
-
-    for j in range(n):
-        for i in range(k):
-            cell = 'cell_' + str(j) + '_' + str(i)      
-            table[table.column[i]][j] = float(request.GET[cell])
+    print(list)
+    #table[table == 0] = float(list)
+    #for j in range(n):
+    #    for i in range(k):
+    #        cell = 'cell_' + str(j) + '_' + str(i)      
+    #        table[table.column[i]][j] = float(request.GET[cell])
             # ou table[table.column[j]][i] = float(request.GET[cell])
       
     return table
@@ -95,8 +110,13 @@ def get_variance():
   
     return variance
 
+
 def get_mq():
     global mq_in, variance
     mq_in = sum(variance) / len(variance)
   
     return mq_in
+
+
+def format_html(cell):
+    return '<input name="{}" value="{{}}" type="number" min="0" step=".25" />'.format(cell)

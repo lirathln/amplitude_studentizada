@@ -13,20 +13,29 @@
 
     <div>
         <form action="{% url 'create_table' %}" id="create_table" name="create_table">
-            {% csrf_token %}
+            
             <label for="inicio">Inicio</label>
             <table id="inicio" border="1">
                 <tr>
                     <td>Tratamentos (k)</td>
-                    <td><input type="number" id="k" name="k" min="0" value="{{ k }}" style="border: 0; text-align: center;"></td>
+                    <td><input type="number" id="k" name="k" min="0" value="{{ k }}"
+                            style="border: 0; text-align: center;"></td>
                 </tr>
                 <tr>
                     <td>Repetições (n)</td>
-                    <td><input type="number" id="n" name="n" min="0" value="{{ n }}" style="border: 0; text-align: center;"></td>
+                    <td><input type="number" id="n" name="n" min="0" value="{{ n }}"
+                            style="border: 0; text-align: center;"></td>
                 </tr>
                 <tr>
                     <td>Alfa</td>
-                    <td><input type="text" id="alfa" name="alfa" value="{{ alfa }}" style="border: 0; text-align: center;"></td>
+                    <td>
+                        <select id="alfa" name="alfa">
+                            {% for af in alfa_list %}
+                                <!-- não está mantendo o alfa selecionado -->
+                                <option value="{{ af }}"{% if af == alfa %} selected{% endif %}>{{ af }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
                 </tr>
                 {% for item in items %}
                 <tr>
@@ -38,55 +47,15 @@
             <input type="submit" value="Gerar tabela de tratamentos">
         </form>
     </div>
-    
+
     <br>
 
     <div>
-        <form action="{% url 'calcule_average' %}" id="calcule_average">
-            {% csrf_token %}
-            <label for="teste">Tratamentos</label>
-            <table id="teste">
-                {% for row in list %}
-                <tr>
-                    {% for cell in row %}
-                    {% if forloop.first or forloop.parentloop.first %}
-                    <th>
-                        {% else %}
-                    <td>
-                        {% endif %}
-                        {{ cell }}
-                        {% if forloop.first or forloop.parentloop.first %}
-                        </th>
-                        {% else %}
-
-                        <input type="text"
-                            id="cell_{{ forloop.parentloop.counter|add:'-2' }}_{{ forloop.counter|add:'-2' }}"
-                            name="cell_{{ forloop.parentloop.counter|add:'-2' }}_{{ forloop.counter|add:'-2' }}"
-                            style="width: 50px; text-align: center;">
-                    </td>
-                    {% endif %}
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-                <tr>
-                    <th>Média</th>
-                    {% for average in averages %}
-                    <td>{{ average }}</td>
-                    {% endfor %}
-                </tr>
-
-                <tr>
-                    <th>Variância</th>
-                    {% for variance in variances %}
-                    <td>{{ variance }}</td>
-                    {% endfor %}
-                </tr>
-
-                <tr>
-                    <th>MQ Dentro</th>
-                    <td>{{ mq_in }}</td>
-                </tr>
-            </table>
+        <form action="{% url 'calcule_tukey' %}" id="calcule_tukey">
+            <p>Tratamentos</p>
+            {% autoescape off %}
+            {{ table }}
+            {% endautoescape %}
             <input type="submit" value="Calcular">
         </form>
     </div>
